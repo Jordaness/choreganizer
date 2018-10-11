@@ -15,6 +15,7 @@ $(document).ready(function(){
 	        $("#loginEmail").focus();
 	        e.stopPropagation();
 	        eventStop();
+	        e.preventDefault();
 	    });
 	    
 	    // When the user clicks the register button, opens the modal and stops the Sunrise JS
@@ -24,6 +25,7 @@ $(document).ready(function(){
 	        $("#email").focus();
 	        e.stopPropagation();
 	        eventStop();
+	        e.preventDefault();
 	    });
 	
 	    //closes alert boxes

@@ -59,36 +59,50 @@
 	            <tbody id="userBody">
 	              <c:forEach items="${allUsers}" var="single">
 		                 <tr>
+		                 	<!-- User Name -->
 		                   <td>${single.first} ${single.last}</td>
+		                   <!-- User Phone -->
 		                   <td>${single.phone}</td>
-		                   <c:if test="${user.getRoles().size() > 2}">
-		                   <td>
-		                       <c:if test="${single.getRoles().size() == 3}">Super Admin</c:if>
-		                       <c:if test="${single.getRoles().size() != 3}">
-		                       <c:if test="${single == user}">Admin</c:if>
-			                       <c:if test="${single != user}">
-			                       		<a href="#" id="D${single.id}" class="userDelete">Delete User</a>
-			                       <c:if test="${single.getRoles().size() == 1}"> | <a href="#" id="S${single.id}" class="makeAdmin">Make Admin</a></c:if>
-			                       <c:if test="${single.getRoles().size() == 2}"> | <a href="#" id="S${single.id}" class="takeAdmin">Take Admin</a></c:if>
-			                       </c:if>
-		                       </c:if>
-		                   </td>
+		                   <!--  User Title / Options -->
+		                   		<!-- Super User Options -->
+		                   <c:if test="${user.getRoles().size() == 4}">
+			                   <td>
+			                       <c:if test="${single.getRoles().size() == 4}">Super Admin</c:if>
+			                       <c:if test="${single.getRoles().size() == 3}">Manager</c:if>
+			                       <c:if test="${single.getRoles().size() <= 2}">
+										<a href="#" id="D${single.id}" class="userDelete">Delete User</a>
+			                      </c:if>
+			                   </td>
 		                    </c:if>
+		                    	<!-- Manager User Options -->
+		                   <c:if test="${user.getRoles().size() == 3}">
+			                   <td>
+			                       <c:if test="${single.getRoles().size() >= 3}">Manager</c:if>
+			                       <c:if test="${single.getRoles().size() <= 2}">
+			                       		<a href="#" id="D${single.id}" class="userRemove">Remove User</a>
+										<c:if test="${single.getRoles().size() == 1}"> | <a href="#" id="S${single.id}" class="makeAdmin">Make Admin</a></c:if>
+										<c:if test="${single.getRoles().size() == 2}"> | <a href="#" id="S${single.id}" class="takeAdmin">Take Admin</a></c:if>
+			                      </c:if>
+			                   </td>
+		                    </c:if>
+		                    	<!-- Admin Options -->
 		                   	<c:if test="${user.getRoles().size() == 2}">
-		                    <c:if test="${single.getRoles().size() > 1}">
-		                    <td>Admin</td>
+			                    <c:if test="${single.getRoles().size() >= 2}">
+			                    	<td>Admin</td>
+			                    </c:if>
+			                    <c:if test="${single.getRoles().size() == 1}">
+			                    	<td><a href="#" id="R${single.id}" class="userRemove">Remove User</a> | <a href="#" id="A${single.id}" class="makeAdmin">Make Admin</a></td>
+			                    </c:if>
 		                    </c:if>
-		                    <c:if test="${single.getRoles().size() == 1}">
-		                    <td><a href="#" id="R${single.id}" class="userRemove">Remove User</a> | <a href="#" id="A${single.id}" class="makeAdmin">Make Admin</a></td>
-		                    </c:if>
-		                    </c:if>
+		                    <!-- Last Sign In -->
 		                   	<c:if test="${single.lastSignIn == null}">
-	                       <td>Never signed in</td>
-		                   </c:if>
-		                   <c:if test="${single.lastSignIn != null}">
+	                       		<td>Never signed in</td>
+		                   	</c:if>
+		                   	<c:if test="${single.lastSignIn != null}">
 		                       <td><fmt:formatDate pattern = "MMMMM dd, yyyy" value="${user.lastSignIn}"></fmt:formatDate></td>
-		                   </c:if>
-		                   <td><fmt:formatDate pattern = "MMMMM dd, yyyy" value="${user.createdAt}"></fmt:formatDate></td>
+		                   	</c:if>
+		                   	<!-- User Create Date -->
+		                   	<td><fmt:formatDate pattern = "MMMMM dd, yyyy" value="${user.createdAt}"></fmt:formatDate></td>
 		                 </tr>
 	               </c:forEach>
 	            </tbody>
@@ -128,8 +142,7 @@
 		</div>
 		<div class="message">
 			<div class="row-fluid">
-				<table class="table table-bordered table-striped">
-				
+				<table class="table table-bordered">
 					<thead>
 						<tr>
 							<th>

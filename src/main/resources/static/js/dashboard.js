@@ -178,9 +178,9 @@ $(document).ready(function(){
     		html += "<tr><td>"+user.first + " " + user.last+"</td>"
     		html += "<td>"+user.phone+"</td>"
     		switch(user.roles.length){
-    			case 3:
+    			case 4,3:
     				//super admin
-    				html += "<td>Super Admin</td>"
+    				html += "<td>Manager</td>"
     				break;
     			case 2:
     				//admin

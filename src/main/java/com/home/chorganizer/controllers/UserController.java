@@ -67,14 +67,14 @@ public class UserController {
             return "index.jsp";
         }
         if(userService.everyUser().size() == 0) {
-        	User u = userService.saveSuper(user);
+        	User su = userService.saveSuper(user);
         	try {
-        		request.login(u.getEmail(), password);
+        		request.login(su.getEmail(), password);
         	} catch(ServletException e) {
         		// can't fail
         	}
-            session.setAttribute("userId", u.getId());
-            return "redirect:/home";
+            session.setAttribute("userId", su.getId());
+            return "redirect:/admin";
         }
         else {
             User u = userService.savePleb(user);
@@ -96,7 +96,7 @@ public class UserController {
     	if(user == null) { // user must be logged in
     		return "redirect:/login";
     	}
-    	if(user.getHouse() == null && user.getRoles().size() <= 2) { //user has no current house, and not be the super user
+    	if(user.getHouse() == null && !userService.isSuperUser(user) ) { //user has no current house, and not be the super user
     		model.addAttribute("user", user);
     		if(error != null) {
     			model.addAttribute("logError", "Invalid house credentials, please try again.");
@@ -130,12 +130,12 @@ public class UserController {
     	houseValidator.validate(house, result);
     	if(result.hasErrors()) { //return user to form to fix errors
     		return "addHouse.jsp";
-    	} else { // create house and add member
+    	} else { // create house and add member as House Manager
     		House home = houseService.createHouse(house);
     		String email = principal.getName();
     		User member = userService.findByEmail(email);
     		userService.addHouse(home, member);
-    		userService.updateAdmin(member);
+    		userService.updateManager(member);
     		return "redirect:/admin";
     	}
     }
@@ -172,7 +172,8 @@ public class UserController {
     	}
         User user = userService.findByEmail(email);
         House house = user.getHouse();
-    	if(user.getRoles().size() < 3 && house == null) { //if not a superuser and admin doesn't have a home
+        boolean superUser = userService.isSuperUser(user);
+    	if(!superUser && house == null) { //if not a super user and admin doesn't have a home
     		return "redirect:/addHouse";
     	}
         model.addAttribute("user", user);
@@ -180,7 +181,7 @@ public class UserController {
         session.setAttribute("userId", user.getId());
         List<Chore> chores = choreService.allChoresFromHome(house);
 		model.addAttribute("chores", chores);
-        if(user.getRoles().size() > 2) { // super sees every user
+        if(superUser) { // super sees every user
         	 model.addAttribute("allUsers", userService.everyUser());
         } else if (user.getRoles().size() > 1) { //admins just see their house mates
         	 model.addAttribute("allUsers", userService.allUsers(house)); 
@@ -195,7 +196,7 @@ public class UserController {
         House userHome = user.getHouse();
         User housemate = userService.findByEmail(principal.getName());
         House currentHome = housemate.getHouse();
-        if(housemate.getRoles().size() > 2 || (housemate.getRoles().size() > 1 && currentHome.equals(userHome))) { // Requestor must be super user and fellow house admin
+        if(userService.isSuperUser(housemate) || (housemate.getRoles().size() >= 2 && currentHome.equals(userHome))) { // Requestor must be super user and fellow house admin
 	        userService.updateAdmin(user);
         } 
         
@@ -206,7 +207,7 @@ public class UserController {
     public void takeAd(@PathVariable("id") Long id, Principal principal){
         User user = userService.findById(id);
         User housemate = userService.findByEmail(principal.getName());
-        if(housemate.getRoles().size() > 2 || (housemate.getRoles().size() > 1 && housemate.getHouse().equals(user.getHouse()))) { // Requestor must be super user/house admin and fellow house admin
+        if(userService.isSuperUser(housemate) || (housemate.getRoles().size() >= 2 && housemate.getHouse().equals(user.getHouse()))) { // Requestor must be super user/house admin and fellow house admin
 	        userService.updatePleb(user);
         } 
     }
@@ -214,12 +215,12 @@ public class UserController {
     // delete a user
     @PostMapping("/admin/delete/{id}")
     public void delete(@PathVariable("id") Long id, Principal principal){
-    	User housemate = userService.findByEmail(principal.getName());
-    	if(housemate.getRoles().size() > 2) { // Requestor must be super user
+    	User user = userService.findByEmail(principal.getName());
+    	if(userService.isSuperUser(user) || id == user.getId()) { // Requestor must be super user or user logged in
 	    	userService.deleteUser(id);
     	} 
     }
-    
+     
     // remove user from house    
     @PostMapping("/admin/remove/{id}")
     public String remove(@PathVariable("id") Long id, Principal principal){
@@ -227,7 +228,7 @@ public class UserController {
     	House userHouse = userToRemove.getHouse();
     	User requestor = userService.findByEmail(principal.getName());
     	House requestorHome = requestor.getHouse();
-    	if(requestor.getRoles().size() > 2 || (requestor.getRoles().size() > 1 && requestorHome.equals(userHouse))) { // Requestor must be super user/house admin and fellow house admin
+    	if(userService.isSuperUser(requestor) || (requestor.getRoles().size() > 1 && requestorHome.equals(userHouse))|| id == requestor.getId()) { // Requestor must be super user, fellow house admin, or the user
 	    	userService.removeHouse(userHouse, userToRemove);
 	        return "redirect:/admin";
     	} else {
@@ -257,7 +258,7 @@ public class UserController {
            session.setAttribute("userId", user.getId());
            List<Chore> chores = choreService.allChoresFromHome(house);
    		   model.addAttribute("chores", chores);
-           if(user.getRoles().size() > 2) { // super sees every user
+           if(userService.isSuperUser(user)) { // super sees every user
            	 model.addAttribute("allUsers", userService.everyUser());
            } else if (user.getRoles().size() > 1) { //admins just see their house mates
            	 model.addAttribute("allUsers", userService.allUsers(house)); 
@@ -299,7 +300,7 @@ public class UserController {
             
             List<Chore> chores = choreService.allChoresFromHome(house);
     		model.addAttribute("chores", chores);
-            if(user.getRoles().size() > 2) { // super sees every user
+            if(userService.isSuperUser(user)) { // super sees every user
             	 model.addAttribute("allUsers", userService.everyUser());
             } else if (user.getRoles().size() > 1) { //admins just see their house mates
             	 model.addAttribute("allUsers", userService.allUsers(house)); 
@@ -367,5 +368,12 @@ public class UserController {
 	    	userService.updateAccount(currUser);
 	    	return "redirect:/home";
     	}
+    }
+    
+    @RequestMapping("/makeManager")
+    public String makeSuper(Principal principal) {
+    	User user = userService.findByEmail(principal.getName());
+    	userService.updateManager(user);
+    	return "redirect:/admin";
     }
 }

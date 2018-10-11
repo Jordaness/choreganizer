@@ -28,7 +28,9 @@
     <div class="header">
         <a class="homebutton" href="/home"><i class="fas fa-home"></i></a>
         <a href="/home"class="logolink"><h1 id="logo">Choreganizer</h1></a>
-	    <a href="/logout" id="logoutUser">Logout</a>
+        <div class="options">
+	    	<a href="/logout" id="logoutUser" class="headerlink">Logout</a>
+	    </div>
     </div>
 	    
     	<div id="joinHouse">

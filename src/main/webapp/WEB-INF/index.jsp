@@ -21,13 +21,15 @@
     <div class="header">
         <a class="homebutton" href="/home"><i class="fas fa-home"></i></a>
         <a href="/home" class="logolink"><h1 id="logo">Choreganizer</h1></a>
-        <c:if test="${sessionScope.userId == null}">
-	        <a id="myBtn" >Login</a>
-	        <a id="myBtnTwo" >Register</a>
-	    </c:if>
-	    <c:if test="${sessionScope.userId != null}">
-	    	<a href="/logout" id="logoutUser">Logout</a>
-	    </c:if>
+        <div class="options">
+	        <c:if test="${sessionScope.userId == null}">
+		        <a href="#" class="headerlink" id="myBtn">Login</a>
+		        <a href="#" class="headerlink" id="myBtnTwo">Register</a>
+		    </c:if>
+		    <c:if test="${sessionScope.userId != null}">
+		    	<a href="/logout" class="headerlink" id="logoutUser">Logout</a>
+		    </c:if>
+	    </div>
     </div>
     <!-- Logout Alert -->
     <c:if test="${logout != null}">

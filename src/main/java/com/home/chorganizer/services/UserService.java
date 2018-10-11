@@ -30,9 +30,15 @@ public class UserService {
     		Role user = new Role();
     		user.setType("ROLE_USER");
     		roleRepository.save(user);
+    		
     		Role admin = new Role();
     		admin.setType("ROLE_ADMIN");
     		roleRepository.save(admin);
+    		
+    		Role houseManager = new Role();
+    		houseManager.setType("ROLE_MANAGER");
+    		roleRepository.save(houseManager);
+    		
     		Role superb = new Role();
     		superb.setType("ROLE_SUPER");
     		roleRepository.save(superb);
@@ -53,12 +59,22 @@ public class UserService {
         roles.add(roleRepository.findByType("ROLE_ADMIN"));
         user.setRoles(roles);
         return userRepository.save(user);
-    }    
+    }
+    public User saveManager(User user) {
+    	 user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+         ArrayList<Role> roles = new ArrayList<Role>();
+         roles.add(roleRepository.findByType("ROLE_USER"));
+         roles.add(roleRepository.findByType("ROLE_ADMIN"));
+         roles.add(roleRepository.findByType("ROLE_MANAGER"));
+         user.setRoles(roles);
+         return userRepository.save(user);
+    }
     public User saveSuper(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         ArrayList<Role> roles = new ArrayList<Role>();
         roles.add(roleRepository.findByType("ROLE_USER"));
         roles.add(roleRepository.findByType("ROLE_ADMIN"));
+        roles.add(roleRepository.findByType("ROLE_MANAGER"));
         roles.add(roleRepository.findByType("ROLE_SUPER"));
         user.setRoles(roles);
         return userRepository.save(user);
@@ -84,6 +100,16 @@ public class UserService {
     	}
     }
     
+    public boolean isSuperUser(User user) {
+    	Role superUser = roleRepository.findByType("ROLE_SUPER");
+    	if(user.getRoles().contains(superUser)) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    	
+    }
+    
     public List<User> everyUser(){
     	return userRepository.findAll();
     }
@@ -104,7 +130,23 @@ public class UserService {
         user.setRoles(roles);
         userRepository.save(user);
     }
-    
+    public void updateManager(User user) {
+    	ArrayList<Role> roles = new ArrayList<Role>();
+        roles.add(roleRepository.findByType("ROLE_USER"));
+        roles.add(roleRepository.findByType("ROLE_ADMIN"));
+        roles.add(roleRepository.findByType("ROLE_MANAGER"));
+        user.setRoles(roles);
+        userRepository.save(user);
+    }
+    public void updateSuper(User user) {
+    	ArrayList<Role> roles = new ArrayList<Role>();
+        roles.add(roleRepository.findByType("ROLE_USER"));
+        roles.add(roleRepository.findByType("ROLE_ADMIN"));
+        roles.add(roleRepository.findByType("ROLE_MANAGER"));
+        roles.add(roleRepository.findByType("ROLE_SUPER"));
+        user.setRoles(roles);
+        userRepository.save(user);
+    }
     public void updateAccount(User user) {
     	userRepository.save(user);
     }
