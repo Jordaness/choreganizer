@@ -7,16 +7,16 @@ Project source can be downloaded from [here](https://github.com/pawncouncil/chor
 ----
 Authors & Contributors
 ----
-* Paul Turner
-* Jordan Hudson
+Paul Turner
+Jordan Hudson
 
 Technology Included
 ======
-* __Languages:__ Java, JavaScript
-* __Server:__ Tomcat/Apache
-* __Database:__ MySQL
-* __ORM:__ Hibernate
-* __Other tools:__ Jquery, BootStrap 4, JavaServer Pages(JSP), Font Awesome
+__Languages:__ Java, JavaScript
+__Server:__ Tomcat/Apache
+__Database:__ MySQL
+__ORM:__ Hibernate
+__Other tools:__ Jquery, BootStrap 4, JavaServer Pages(JSP), Font Awesome
 
 Executing the project on your machine
 ----
