@@ -1,10 +1,10 @@
 CHOREGANIZER
 ===
 
-Java (Spring Boot) based web application made for organizing household chores
------
-Project source can be downloaded from [here](https://github.com/pawncouncil/choreganizer.git)
------
+###### Java (Spring Boot) based web application made for organizing household chores
+
+###### Project source can be downloaded from [here](https://github.com/pawncouncil/choreganizer.git)
+
 Authors & Contributors
 ======
 Paul Turner     
